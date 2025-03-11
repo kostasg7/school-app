@@ -43,8 +43,32 @@ public class TeacherServiceImpl implements ITeacherService{
     }
 
     @Override
-    public TeacherReadOnlyDTO updateTeacher(Integer id, TeacherUpdateDTO dto) throws TeacherDAOException, TeacherAlreadyExistsException, TeacherNotFoundException {
-        return null;
+    public TeacherReadOnlyDTO updateTeacher(Integer id, TeacherUpdateDTO dto)
+            throws TeacherDAOException, TeacherAlreadyExistsException, TeacherNotFoundException {
+
+        Teacher teacher;
+        Teacher fetchedTeacher;
+        Teacher updatedTeacher;
+
+        try {
+            if (teacherDAO.getById(id) == null) {
+                throw new TeacherNotFoundException("Teacher with id: " + id + " not found");
+            }
+
+            fetchedTeacher = teacherDAO.getTeacherByVat(dto.getVat());
+            if (fetchedTeacher != null && !fetchedTeacher.getId().equals(dto.getId())) {
+                throw new TeacherAlreadyExistsException("Teacher with id: " + id + " already exists");
+            }
+
+            teacher = Mapper.mapTeacherUpdateToModel(dto);
+            updatedTeacher = teacherDAO.update(teacher);
+            // logging
+            return Mapper.mapTeacherToReadOnlyDTO(updatedTeacher).orElseThrow(() -> new TeacherDAOException("Error during mapping"));
+        } catch (TeacherDAOException | TeacherAlreadyExistsException | TeacherNotFoundException e) {
+            // logging
+            // rollback
+            throw e;
+        }
     }
 
     @Override
