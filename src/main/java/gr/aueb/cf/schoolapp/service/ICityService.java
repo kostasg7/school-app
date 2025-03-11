@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ICityService {
 
-    List<City> getAll() throws SQLException;
+    List<City> getAllCities() throws SQLException;
 }

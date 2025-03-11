@@ -15,7 +15,7 @@ public class CityServiceImpl implements ICityService{
     }
 
     @Override
-    public List<City> getAll() throws SQLException {
+    public List<City> getAllCities() throws SQLException {
         try {
             return cityDAO.getAll();
         } catch (SQLException e) {
